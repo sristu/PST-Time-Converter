@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PST Time Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: auto;
+        }
+        input, select, button {
+            margin: 10px;
+            padding: 10px;
+            width: 90%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>PST Time Converter</h2>
+        <label for="location">Select Area:</label>
+        <select id="location">
+            <option value="18">BWU1</option>
+            <option value="18">MEL1</option>
+            <option value="18">BWU6</option>
+            <option value="17">BNE1</option>
+            <option value="15">PER4</option>
+            <option value="15">Sin8</option>
+        </select>
+        
+        <label for="start-time">Shift Start Time:</label>
+        <input type="time" id="start-time">
+        
+        <label for="end-time">Shift End Time:</label>
+        <input type="time" id="end-time">
+        
+        <button onclick="convertTime()">Convert to PST</button>
+        
+        <div class="result" id="output"></div>
+    </div>
+
+    <script>
+        function convertTime() {
+            let locationOffset = parseInt(document.getElementById("location").value);
+            let startTime = document.getElementById("start-time").value;
+            let endTime = document.getElementById("end-time").value;
+            
+            if (!startTime || !endTime) {
+                document.getElementById("output").innerHTML = "Please enter both times.";
+                return;
+            }
+            
+            let startPST = convertToPST(startTime, locationOffset);
+            let endPST = convertToPST(endTime, locationOffset);
+            
+            document.getElementById("output").innerHTML = `PST Times:<br> Start: ${startPST} <br> End: ${endPST}`;
+        }
+        
+        function convertToPST(time, offset) {
+            let [hours, minutes] = time.split(":").map(Number);
+            let date = new Date();
+            date.setHours(hours - offset, minutes);
+            let pstHours = date.getHours();
+            let pstMinutes = date.getMinutes();
+            
+            return `${pstHours.toString().padStart(2, '0')}:${pstMinutes.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
