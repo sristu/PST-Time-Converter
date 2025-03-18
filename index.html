@@ -4,62 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PST Time Converter</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #232F3E; /* Amazon Dark Blue */
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: #FF9900; /* Amazon Orange */
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: auto;
+            box-shadow: 0 4px 8px rgba(255, 153, 0, 0.5);
+        }
+        select, input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+        button {
+            background: #146EB4; /* Amazon Blue */
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 95%;
+        }
+        button:hover {
+            background: #0f5c9c;
+        }
+        .result {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #232F3E;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
+
+    <h1>PST Time Converter</h1>
     <div class="container">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon Logo" class="logo">
-        <h1>PST Time Converter</h1>
-        
-        <label for="area">Select Area:</label>
+        <label for="area">Select an Area:</label>
         <select id="area">
-            <option value="18">BWU1</option>
-            <option value="18">MEL1 </option>
-            <option value="18">BWU6 </option>
-            <option value="17">BNE1 </option>
-            <option value="15">PER4 </option>
-            <option value="15">Sin8 </option>
+            <option value="18">BWU1 (18 hrs ahead of PST)</option>
+            <option value="18">MEL1 (18 hrs ahead of PST)</option>
+            <option value="18">BWU6 (18 hrs ahead of PST)</option>
+            <option value="17">BNE1 (17 hrs ahead of PST)</option>
+            <option value="15">PER4 (15 hrs ahead of PST)</option>
+            <option value="15">Sin8 (15 hrs ahead of PST)</option>
         </select>
-        
-        <label for="date">Select Date:</label>
-        <input type="date" id="date">
-        
-        <label for="startTime">Shift Start Time:</label>
-        <input type="time" id="startTime">
-        
-        <label for="endTime">Shift End Time:</label>
-        <input type="time" id="endTime">
-        
-        <button onclick="convertToPST()">Convert to PST</button>
-        
-        <h2>Converted PST Times:</h2>
-        <p id="result"></p>
+
+        <label for="start">Shift Start Time (24-hour format):</label>
+        <input type="time" id="start">
+
+        <label for="end">Shift End Time (24-hour format):</label>
+        <input type="time" id="end">
+
+        <button onclick="convertTime()">Convert to PST</button>
+
+        <div id="output" class="result"></div>
     </div>
 
     <script>
-        function convertToPST() {
-            let offset = parseInt(document.getElementById("area").value);
-            let date = new Date(document.getElementById("date").value);
-            let startTime = document.getElementById("startTime").value;
-            let endTime = document.getElementById("endTime").value;
-            
-            if (!date || !startTime || !endTime) {
-                document.getElementById("result").innerText = "Please select all fields.";
+        function convertTime() {
+            let areaOffset = parseInt(document.getElementById("area").value);
+            let startTime = document.getElementById("start").value;
+            let endTime = document.getElementById("end").value;
+
+            if (!startTime || !endTime) {
+                document.getElementById("output").innerHTML = "Please enter both times!";
                 return;
             }
-            
-            function convertTime(timeStr) {
-                let [hours, minutes] = timeStr.split(":").map(Number);
-                let localDateTime = new Date(date);
-                localDateTime.setHours(hours - offset, minutes);
-                return localDateTime.toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+
+            function convertToPST(time) {
+                let [hours, minutes] = time.split(":").map(Number);
+                let pstHours = (hours - areaOffset + 24) % 24;
+                return `${pstHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
             }
-            
-            let startPST = convertTime(startTime);
-            let endPST = convertTime(endTime);
-            
-            document.getElementById("result").innerHTML = `<strong>Start PST:</strong> ${startPST} <br> <strong>End PST:</strong> ${endPST}`;
+
+            let pstStart = convertToPST(startTime);
+            let pstEnd = convertToPST(endTime);
+
+            document.getElementById("output").innerHTML = `
+                PST Start Time: ${pstStart} <br>
+                PST End Time: ${pstEnd}
+            `;
         }
     </script>
+
 </body>
 </html>
