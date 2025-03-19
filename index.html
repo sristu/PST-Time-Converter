@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PST Time Converter</title>
+    <title>PST Time and Date Converter</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #232F3E; 
+            background-color: #232F3E; /* Amazon Dark Blue */
             color: white;
             text-align: center;
             padding: 20px;
         }
         .container {
-            background: #FF9900; 
+            background: #FF9900; /* Amazon Orange */
             padding: 20px;
             border-radius: 10px;
             max-width: 400px;
@@ -29,7 +29,7 @@
             font-size: 16px;
         }
         button {
-            background: #146EB4; / Amazon Blue */
+            background: #146EB4; /* Amazon Blue */
             color: white;
             padding: 10px 20px;
             font-size: 18px;
@@ -43,17 +43,24 @@
         }
         .result {
             margin-top: 15px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: #232F3E;
             background: white;
             padding: 10px;
             border-radius: 5px;
+            text-align: left;
+        }
+        .result-title {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 10px;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <h1>PST Time Converter</h1>
+    <h1>PST Time and Date Converter</h1>
     <div class="container">
         <label for="area">Select an Area:</label>
         <select id="area">
@@ -65,10 +72,13 @@
             <option value="15">Sin8</option>
         </select>
         <br/>
-        <label for="start">Shift Start Time </label>
+        <label for="date">Select Date:</label>
+        <input type="date" id="date">
+        <br/>
+        <label for="start">Shift Start Time:</label>
         <input type="time" id="start">
-
-        <label for="end">Shift End Time</label>
+        
+        <label for="end">Shift End Time:</label>
         <input type="time" id="end">
         <button onclick="convertTime()">Convert to PST</button>
         <div id="output" class="result"></div>
@@ -76,24 +86,59 @@
     <script>
         function convertTime() {
             let areaOffset = parseInt(document.getElementById("area").value);
+            let selectedDate = document.getElementById("date").value;
             let startTime = document.getElementById("start").value;
             let endTime = document.getElementById("end").value;
-            if (!startTime || !endTime) {
-                document.getElementById("output").innerHTML = "Please enter both times!";
+            
+            if (!selectedDate || !startTime || !endTime) {
+                document.getElementById("output").innerHTML = "Please enter date and both times!";
                 return;
             }
-            function convertToPST(time) {
-                let [hours, minutes] = time.split(":").map(Number);
-                let pstHours = (hours - areaOffset + 24) % 24;
-                return ${pstHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")};
+            
+            function formatDate(dateObj) {
+                // Format date as DD-MM-YY
+                let day = dateObj.getDate().toString().padStart(2, "0");
+                let month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+                let year = dateObj.getFullYear().toString().slice(-2);
+                return `${day}-${month}-${year}`;
             }
-            let pstStart = convertToPST(startTime);
-            let pstEnd = convertToPST(endTime);
-            document.getElementById("output").innerHTML = 
-                PST Start Time: ${pstStart} <br>
-                PST End Time: ${pstEnd}
-            ;
+            
+            function formatTime(dateObj) {
+                // Format time as H:MM AM/PM
+                let hours = dateObj.getHours();
+                let ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // Convert 0 to 12
+                let minutes = dateObj.getMinutes().toString().padStart(2, "0");
+                return `${hours}:${minutes} ${ampm}`;
+            }
+            
+            function convertToPST(dateStr, timeStr) {
+                // Create a date object with the selected date and time
+                let localDate = new Date(`${dateStr}T${timeStr}:00`);
+                
+                // Simply subtract the hour difference
+                localDate.setHours(localDate.getHours() - areaOffset);
+                
+                return localDate;
+            }
+            
+            // Convert to PST
+            let pstStartDate = convertToPST(selectedDate, startTime);
+            let pstEndDate = convertToPST(selectedDate, endTime);
+            
+            // Format the output
+            let outputHTML = `
+                <div class="result-title">PST Converted Time</div>
+                <div>Shift Start Time: ${formatTime(pstStartDate)} ${formatDate(pstStartDate)}</div>
+                <div>Shift End Time: ${formatTime(pstEndDate)} ${formatDate(pstEndDate)}</div>
+            `;
+            
+            document.getElementById("output").innerHTML = outputHTML;
         }
+        
+        // Set today's date as default
+        document.getElementById("date").valueAsDate = new Date();
     </script>
 </body>
 </html>
