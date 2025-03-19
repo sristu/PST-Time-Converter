@@ -7,13 +7,13 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #232F3E; /* Amazon Dark Blue */
+            background-color: #232F3E; 
             color: white;
             text-align: center;
             padding: 20px;
         }
         .container {
-            background: #FF9900; /* Amazon Orange */
+            background: #FF9900; 
             padding: 20px;
             border-radius: 10px;
             max-width: 400px;
@@ -29,7 +29,7 @@
             font-size: 16px;
         }
         button {
-            background: #146EB4; /* Amazon Blue */
+            background: #146EB4; / Amazon Blue */
             color: white;
             padding: 10px 20px;
             font-size: 18px;
@@ -53,7 +53,6 @@
     </style>
 </head>
 <body>
-
     <h1>PST Time Converter</h1>
     <div class="container">
         <label for="area">Select an Area:</label>
@@ -68,42 +67,33 @@
         <br/>
         <label for="start">Shift Start Time </label>
         <input type="time" id="start">
-        
 
         <label for="end">Shift End Time</label>
         <input type="time" id="end">
-
         <button onclick="convertTime()">Convert to PST</button>
-
         <div id="output" class="result"></div>
     </div>
-
     <script>
         function convertTime() {
             let areaOffset = parseInt(document.getElementById("area").value);
             let startTime = document.getElementById("start").value;
             let endTime = document.getElementById("end").value;
-
             if (!startTime || !endTime) {
                 document.getElementById("output").innerHTML = "Please enter both times!";
                 return;
             }
-
             function convertToPST(time) {
                 let [hours, minutes] = time.split(":").map(Number);
                 let pstHours = (hours - areaOffset + 24) % 24;
-                return `${pstHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+                return ${pstHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")};
             }
-
             let pstStart = convertToPST(startTime);
             let pstEnd = convertToPST(endTime);
-
-            document.getElementById("output").innerHTML = `
+            document.getElementById("output").innerHTML = 
                 PST Start Time: ${pstStart} <br>
                 PST End Time: ${pstEnd}
-            `;
+            ;
         }
     </script>
-
 </body>
 </html>
