@@ -57,12 +57,27 @@
             margin-bottom: 10px;
             text-decoration: underline;
         }
+        .date-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .date-input {
+            width: 45%;
+        }
+        .label {
+            display: block;
+            text-align: left;
+            margin-left: 5%;
+            margin-top: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <h1>PST Time and Date Converter</h1>
     <div class="container">
-        <label for="area">Select an Area:</label>
+        <span class="label">Select an Area:</span>
         <select id="area">
             <option value="18">BWU1</option>
             <option value="18">MEL1</option>
@@ -71,27 +86,37 @@
             <option value="15">PER4</option>
             <option value="15">Sin8</option>
         </select>
-        <br/>
-        <label for="date">Select Date:</label>
-        <input type="date" id="date">
-        <br/>
-        <label for="start">Shift Start Time:</label>
+        
+        <div class="date-group">
+            <div class="date-input">
+                <span class="label">Start Date:</span>
+                <input type="date" id="startDate">
+            </div>
+            <div class="date-input">
+                <span class="label">End Date:</span>
+                <input type="date" id="endDate">
+            </div>
+        </div>
+        
+        <span class="label">Shift Start Time:</span>
         <input type="time" id="start">
         
-        <label for="end">Shift End Time:</label>
+        <span class="label">Shift End Time:</span>
         <input type="time" id="end">
+        
         <button onclick="convertTime()">Convert to PST</button>
         <div id="output" class="result"></div>
     </div>
     <script>
         function convertTime() {
             let areaOffset = parseInt(document.getElementById("area").value);
-            let selectedDate = document.getElementById("date").value;
+            let selectedStartDate = document.getElementById("startDate").value;
+            let selectedEndDate = document.getElementById("endDate").value || selectedStartDate; // Default to start date if end date not provided
             let startTime = document.getElementById("start").value;
             let endTime = document.getElementById("end").value;
             
-            if (!selectedDate || !startTime || !endTime) {
-                document.getElementById("output").innerHTML = "Please enter date and both times!";
+            if (!selectedStartDate || !startTime || !endTime) {
+                document.getElementById("output").innerHTML = "Please enter start date and both times!";
                 return;
             }
             
@@ -124,21 +149,23 @@
             }
             
             // Convert to PST
-            let pstStartDate = convertToPST(selectedDate, startTime);
-            let pstEndDate = convertToPST(selectedDate, endTime);
+            let pstStartDate = convertToPST(selectedStartDate, startTime);
+            let pstEndDate = convertToPST(selectedEndDate, endTime);
             
             // Format the output
             let outputHTML = `
                 <div class="result-title">PST Converted Time</div>
-                <div>Shift Start Time: ${formatTime(pstStartDate)} ${formatDate(pstStartDate)}</div>
-                <div>Shift End Time: ${formatTime(pstEndDate)} ${formatDate(pstEndDate)}</div>
+                <div>Shift Start: ${formatTime(pstStartDate)} ${formatDate(pstStartDate)}</div>
+                <div>Shift End: ${formatTime(pstEndDate)} ${formatDate(pstEndDate)}</div>
             `;
             
             document.getElementById("output").innerHTML = outputHTML;
         }
         
-        // Set today's date as default
-        document.getElementById("date").valueAsDate = new Date();
+        // Set today's date as default for both date inputs
+        const today = new Date();
+        document.getElementById("startDate").valueAsDate = today;
+        document.getElementById("endDate").valueAsDate = today;
     </script>
 </body>
 </html>
